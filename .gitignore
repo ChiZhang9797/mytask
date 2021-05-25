@@ -1,0 +1,6 @@
+.vscode/
+*.db
+
+build/
+dist/
+mytask.egg-info/
