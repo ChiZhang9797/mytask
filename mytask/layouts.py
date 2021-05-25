@@ -10,11 +10,17 @@ def grid_layout(tasks):
     for i, task in enumerate(tasks):
         ind = Text(str(i + 1), style="bold green")
         name = Text(task.name, style="blue")
+        created_date = Text(
+            task.created_date.strftime("%d/%m/%Y %H:%M"), 
+            style="italic magenta"
+        )
 
         task_summary = Text.assemble(
             ind,
-            "\n",
+            ". ",
             name,
+            "\nCreated at: ",
+            created_date,
         )
 
         panels.append(Panel(task_summary, expand=True))

@@ -1,6 +1,5 @@
 import click
 import sys
-
 from .models import Tasks, Base
 from .database import Session, engine
 from .layouts import grid_layout
