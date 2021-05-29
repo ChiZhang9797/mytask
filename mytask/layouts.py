@@ -14,13 +14,21 @@ def grid_layout(tasks):
             task.created_date.strftime("%d/%m/%Y %H:%M"), 
             style="italic magenta"
         )
+        detail = Text(task.detail, style="gray") \
+            if task.detail else "None"
+        
+        completed = Text("(completed) ", style="green") \
+            if task.completed else ""
 
         task_summary = Text.assemble(
-            ind,
-            ". ",
+            ind, 
+            ". ", 
+            completed,
             name,
             "\nCreated at: ",
             created_date,
+            "\nDetail: ",
+            detail,
         )
 
         panels.append(Panel(task_summary, expand=True))
