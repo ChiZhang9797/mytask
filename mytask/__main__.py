@@ -15,6 +15,13 @@ def map_num_to_id(tasks):
     return id_dict
 
 
+def map_id_to_num(tasks):
+    num_dict = dict()
+    for i, row in enumerate(tasks):
+        num_dict.update({row.id: i + 1})
+    return num_dict
+
+
 def parse_indices(task_numbers):
     inds = []
     for num in task_numbers:
@@ -113,18 +120,59 @@ def delete(task_numbers):
 
 
 @click.command(name="list", help="Displays all tasks")
-def lis():
+@click.option(
+    "--status",
+    "-s",
+    type=click.Choice(
+        ["All", "Completed", "Uncompleted"],
+        case_sensitive=False,
+    ),
+    default="All",
+    show_choices=True,
+    help="Displays tasks of seleted status"
+)
+def lis(status):
     try:
-        tasks = session.query(Tasks).all()
+        task_query = session.query(Tasks)
+        num_dict = map_id_to_num(task_query.all())
     except:
         sys.exit(f"Something went wrong. {sys.exc_info()[0]}")
 
-    if len(tasks) == 0:
-        click.echo("You have no tasks, take a vacation!🏖️")
-        return
-
-    click.echo("You have the following tasks:")
-    grid_layout(tasks)
+    if status == "All":
+        if len(task_query.all()) == 0:
+            click.echo(
+                "There's no task in your tasks list, take a vacation!🏖️"
+            )
+            return
+        else:
+            click.echo(
+                "You have the following tasks:"
+            )
+        
+    elif status == "Uncompleted": 
+        task_query = task_query.filter(Tasks.completed==False)
+        if len(task_query.all()) == 0:
+            click.echo(
+                "There are no uncompleted tasks, take a vacation!🏖️"
+            )
+            return
+        else:
+            click.echo(
+                "You have the following uncompleted tasks:"
+            )
+        
+    else:
+        task_query = task_query.filter(Tasks.completed==True)
+        if len(task_query.all()) == 0:
+            click.echo(
+                "There are no completed tasks. Check uncompleted tasks"
+            )
+            return
+        else:
+            click.echo(
+                "The following tasks are completed:"
+            )
+    grid_layout(task_query.all(), num_dict)
 
 
 cli.add_command(add)
